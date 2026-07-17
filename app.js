@@ -15,6 +15,7 @@
     pitchValue: document.getElementById("pitchValue"),
     voiceSelect: document.getElementById("voiceSelect"),
     voiceWarning: document.getElementById("voiceWarning"),
+    btnTestVoice: document.getElementById("btnTestVoice"),
     progressBar: document.getElementById("progressBar"),
     progressLabel: document.getElementById("progressLabel"),
     unsupportedMsg: document.getElementById("unsupportedMsg"),
@@ -73,6 +74,7 @@
       var idx = parseInt(els.voiceSelect.value, 10);
       selectedVoice = voices[idx] || null;
     });
+    els.btnTestVoice.addEventListener("click", onTestVoice);
 
     window.addEventListener("beforeunload", function () {
       if (SUPPORTED) synth.cancel();
@@ -89,10 +91,10 @@
   function voiceQualityScore(v) {
     var name = v.name || "";
     var score = 0;
-    if (/google/i.test(name)) score += 100;
-    if (/neural/i.test(name)) score += 90;
-    if (/(enhanced|premium|natural)/i.test(name)) score += 60;
-    if (v.localService === false) score += 20;
+    if (/(enhanced|premium|natural)/i.test(name)) score += 110;
+    if (/neural/i.test(name)) score += 105;
+    if (/google/i.test(name)) score += 90;
+    if (v.localService === false) score += 10;
     return score;
   }
 
@@ -191,6 +193,16 @@
     updateButtons("playing");
     speakNext();
     startWatchdog();
+  }
+
+  function onTestVoice() {
+    synth.cancel();
+    var sample = new SpeechSynthesisUtterance("Olá! Esta é uma amostra da voz selecionada, para você comparar a naturalidade.");
+    sample.rate = rate;
+    sample.pitch = pitch;
+    sample.lang = selectedVoice ? selectedVoice.lang : "pt-BR";
+    if (selectedVoice) sample.voice = selectedVoice;
+    synth.speak(sample);
   }
 
   function speakNext() {
