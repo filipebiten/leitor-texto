@@ -47,9 +47,14 @@
           <input type="range" id="rateRange" min="0.5" max="2" step="0.1" value="1">
         </div>
         <div class="field">
+          <label for="pitchRange">Tom de voz: <span id="pitchValue">1.0</span></label>
+          <input type="range" id="pitchRange" min="0.5" max="1.5" step="0.1" value="1">
+        </div>
+        <div class="field">
           <label for="voiceSelect">Voz</label>
           <select id="voiceSelect"></select>
           <p id="voiceWarning" class="warning" hidden></p>
+          <p class="hint">Dica: vozes com "Google" no nome costumam soar mais naturais que as vozes locais do sistema.</p>
         </div>
       </div>
     </details>

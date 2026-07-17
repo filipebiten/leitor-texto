@@ -11,6 +11,8 @@
     btnClear: document.getElementById("btnClear"),
     rateRange: document.getElementById("rateRange"),
     rateValue: document.getElementById("rateValue"),
+    pitchRange: document.getElementById("pitchRange"),
+    pitchValue: document.getElementById("pitchValue"),
     voiceSelect: document.getElementById("voiceSelect"),
     voiceWarning: document.getElementById("voiceWarning"),
     progressBar: document.getElementById("progressBar"),
@@ -26,6 +28,7 @@
   var voices = [];
   var selectedVoice = null;
   var rate = 1;
+  var pitch = 1;
   var watchdogTimer = null;
   var userPaused = false;
   var state = "idle"; // idle | playing | paused | finished
@@ -62,6 +65,10 @@
       rate = parseFloat(els.rateRange.value);
       els.rateValue.textContent = rate.toFixed(1) + "x";
     });
+    els.pitchRange.addEventListener("input", function () {
+      pitch = parseFloat(els.pitchRange.value);
+      els.pitchValue.textContent = pitch.toFixed(1);
+    });
     els.voiceSelect.addEventListener("change", function () {
       var idx = parseInt(els.voiceSelect.value, 10);
       selectedVoice = voices[idx] || null;
@@ -79,12 +86,24 @@
 
   // ---------- Voices ----------
 
+  function voiceQualityScore(v) {
+    var name = v.name || "";
+    var score = 0;
+    if (/google/i.test(name)) score += 100;
+    if (/neural/i.test(name)) score += 90;
+    if (/(enhanced|premium|natural)/i.test(name)) score += 60;
+    if (v.localService === false) score += 20;
+    return score;
+  }
+
   function loadVoices() {
     voices = synth.getVoices() || [];
     if (!voices.length) return;
 
-    var ptBR = voices.filter(function (v) { return /^pt-BR/i.test(v.lang); });
-    var ptAny = voices.filter(function (v) { return /^pt/i.test(v.lang); });
+    var byQualityDesc = function (a, b) { return voiceQualityScore(b) - voiceQualityScore(a); };
+
+    var ptBR = voices.filter(function (v) { return /^pt-BR/i.test(v.lang); }).sort(byQualityDesc);
+    var ptAny = voices.filter(function (v) { return /^pt/i.test(v.lang); }).sort(byQualityDesc);
     var others = voices.filter(function (v) { return !/^pt/i.test(v.lang); });
     var ordered = ptBR.concat(
       ptAny.filter(function (v) { return ptBR.indexOf(v) === -1; }),
@@ -184,6 +203,7 @@
     var chunk = queue[currentIndex];
     var utterance = new SpeechSynthesisUtterance(chunk);
     utterance.rate = rate;
+    utterance.pitch = pitch;
     utterance.lang = selectedVoice ? selectedVoice.lang : "pt-BR";
     if (selectedVoice) utterance.voice = selectedVoice;
 

@@ -232,6 +232,12 @@ select {
   color: #ffb454;
 }
 
+.hint {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
 .text-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
