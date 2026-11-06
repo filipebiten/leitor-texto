@@ -5,14 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#141824">
 <title>Projeto Rafa — Leitor de Texto por Voz</title>
-<meta name="description" content="Cole um texto e ouça em voz alta, direto no navegador. Sem downloads, sem cadastro.">
+<meta name="description" content="Cole um texto ou suba um PDF, DOCX ou TXT e ouça em voz alta, direto no navegador. Sem downloads, sem cadastro.">
+
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Projeto Rafa">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="topbar">
   <h1>🔊 Projeto Rafa</h1>
-  <p class="subtitle">Cole um texto e ouça em voz alta</p>
+  <p class="subtitle">Cole um texto ou suba um arquivo e ouça em voz alta</p>
 </header>
 
 <main>
@@ -68,8 +75,21 @@
       <label for="textInput">Seu texto</label>
       <button id="btnClear" class="btn btn-link" type="button">Limpar</button>
     </div>
-    <textarea id="textInput" placeholder="Cole aqui o texto que você quer ouvir..." autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+
+    <div class="upload-row">
+      <label for="fileInput" class="btn btn-secondary btn-upload">📄 Carregar arquivo</label>
+      <input type="file" id="fileInput" accept=".pdf,.docx,.txt,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+      <span id="fileStatus" class="file-status" aria-live="polite"></span>
+    </div>
+
+    <textarea id="textInput" placeholder="Cole aqui o texto, ou carregue um arquivo PDF, DOCX ou TXT..." autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
     <p id="charCount" class="char-count">0 caracteres</p>
+
+    <details id="sentenceListWrap" class="sentence-list-wrap" hidden>
+      <summary>Escolher onde começar a leitura (<span id="sentenceCount">0</span> trechos)</summary>
+      <p class="hint">Toque num trecho para começar a leitura a partir dali.</p>
+      <div id="sentenceList" class="sentence-list"></div>
+    </details>
   </section>
 
   <p id="unsupportedMsg" class="unsupported" hidden>
@@ -78,9 +98,10 @@
 </main>
 
 <footer class="footer">
-  <p>Projeto Rafa · leitura de texto local no seu navegador, sem envio de dados a servidores.</p>
+  <p>Projeto Rafa · leitura e extração de arquivos local, no seu navegador, sem envio de dados a servidores.</p>
 </footer>
 
-<script src="app.js"></script>
+<script src="vendor/jszip.min.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
